@@ -29,9 +29,22 @@
 		4687345D2DBA32B900BFDE40 /* KholasahUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KholasahUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		B1C420DC2DCB5AAA0098D82B /* Exceptions for "Kholasah" folder in "Kholasah" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 468734422DBA32B800BFDE40 /* Kholasah */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		468734452DBA32B800BFDE40 /* Kholasah */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				B1C420DC2DCB5AAA0098D82B /* Exceptions for "Kholasah" folder in "Kholasah" target */,
+			);
 			path = Kholasah;
 			sourceTree = "<group>";
 		};

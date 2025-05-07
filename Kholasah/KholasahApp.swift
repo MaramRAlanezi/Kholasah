@@ -11,7 +11,8 @@ import SwiftUI
 struct KholasahApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(audioRecorder: AudioRecorder())
+           // MainButton()
         }
     }
 }
