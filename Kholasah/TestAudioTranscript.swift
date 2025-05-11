@@ -17,32 +17,53 @@ struct TestAudioTranscript: View {
     @State private var transcript = ""
     @State private var isRecording = false
     @State private var whisper: Whisper?
+    @State private var navigateToTranscript = false
+    @State private var showTranscriptButton = false
+    @State private var isProcessingTranscript = false
+    @State private var audioToTranscribeURL: URL?
     
     var body: some View {
-        VStack(spacing: 20) {
-            Text("Arabic + English Transcription")
-                .font(.title2)
-                .bold()
-
-            ScrollView {
-                Text(transcript)
-                    .padding()
-            }
-
-            Button(action: {
-                isRecording ? stopAndTranscribe() : startRecording()
-            }) {
-                Label(isRecording ? "Stop Recording" : "Start Recording", systemImage: isRecording ? "stop.circle" : "mic.circle")
+        NavigationStack{
+            VStack(spacing: 20) {
+                Text("Arabic + English Transcription")
                     .font(.title2)
-                    .padding()
-                    .background(isRecording ? Color.red : Color.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(10)
+                    .bold()
+              
+                Button(action: {
+                    isRecording ? stopAndTranscribe() : startRecording()
+                }) {
+                    Label(isRecording ? "Stop Recording" : "Start Recording", systemImage: isRecording ? "stop.circle" : "mic.circle")
+                        .font(.title2)
+                        .padding()
+                        .background(isRecording ? Color.red : Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
+                }
+                
+                if showTranscriptButton {
+                    if isProcessingTranscript {
+                        ProgressView("Transcribing...")
+                            .padding()
+                    } else {
+                        Button("See Transcript") {
+                            startTranscription() // 👈 This now runs transcription
+                        }
+                        .padding()
+                        .foregroundColor(.white)
+                        .background(Color.green)
+                        .cornerRadius(8)
+                    }
+                }
+                
+                    NavigationLink(destination: MeetingDetailsView(transcript: transcript),isActive: $navigateToTranscript) {
+                                       EmptyView()
+                                   }
+                
             }
-        }
-        .padding()
-        .onAppear {
-            loadModel()
+            .padding()
+            .onAppear {
+                loadModel()
+            }
         }
     }
 
@@ -60,9 +81,40 @@ struct TestAudioTranscript: View {
     func stopAndTranscribe() {
         recorder.stopRecording { url in
             guard let url = url else { return }
-            transcribeAudio(fileURL: url)
+            audioToTranscribeURL = url
+            showTranscriptButton = true
         }
         isRecording = false
+    }
+    
+    func startTranscription() {
+        guard let url = audioToTranscribeURL else { return }
+        isProcessingTranscript = true
+
+        convertAudioFileToPCMArray(fileURL: url) { result in
+            switch result {
+            case .success(let audioFrames):
+                guard let whisper = whisper else {
+                    transcript = "Whisper model not loaded"
+                    return
+                }
+                Task {
+                    do {
+                        let segments = try await whisper.transcribe(audioFrames: audioFrames)
+                        transcript = segments.map(\.text).joined(separator: " ")
+                        isProcessingTranscript = false
+                        navigateToTranscript = true // ✅ Go to result view
+                    } catch {
+                        isProcessingTranscript = false
+                        transcript = "Transcription error: \(error.localizedDescription)"
+                    }
+                }
+
+            case .failure(let error):
+                isProcessingTranscript = false
+                transcript = "Audio conversion error: \(error.localizedDescription)"
+            }
+        }
     }
 
     func transcribeAudio(fileURL: URL) {

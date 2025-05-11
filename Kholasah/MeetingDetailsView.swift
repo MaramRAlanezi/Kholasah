@@ -12,6 +12,7 @@ struct MeetingDetailsView: View {
     @State private var selectedTab = "Transcript"
         
     let tabs = ["Transcript", "Summary", "Report"]
+    let transcript: String
     
     var body: some View {
         
@@ -85,21 +86,7 @@ struct MeetingDetailsView: View {
         
     }
     var transcriptView: some View {
-           Text("""
-                       Good morning, everyone. Let’s get started. This is our weekly software development sync. Today we’ll cover sprint progress, blockers, and priorities for next week. Let’s begin with product updates.
-                       Sure! Just a quick note—our main focus remains on completing the user profile feature...
-
-                           (continue the full text as needed)
-                       
-                       Good morning, everyone. Let’s get started. This is our weekly software development sync. Today we’ll cover sprint progress, blockers, and priorities for next week. Let’s begin with product updates.
-                                   Sure! Just a quick note—our main focus remains on completing the user profile feature...
-
-                                   (continue the full text as needed)
-                       Good morning, everyone. Let’s get started. This is our weekly software development sync. Today we’ll cover sprint progress, blockers, and priorities for next week. Let’s begin with product updates.
-                                   Sure! Just a quick note—our main focus remains on completing the user profile feature...
-
-                                   (continue the full text as needed)
-           """)
+           Text(transcript)
            .padding()
        }
     
