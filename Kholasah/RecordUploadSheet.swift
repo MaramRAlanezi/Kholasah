@@ -5,11 +5,16 @@
 //  Created by Maram Rabeh  on 12/05/2025.
 //
 
+import SwiftUICore
 import SwiftUI
+
 
 struct RecordUploadSheet: View {
     var body: some View {
         VStack(spacing: 20) {
+            
+            Spacer().frame(height: 0)
+
             Button(action: {
                 print("Record tapped")
             }) {
@@ -20,7 +25,7 @@ struct RecordUploadSheet: View {
                 .foregroundColor(.white)
                 .frame(maxWidth: .infinity)
                 .padding()
-                .background(Color.red)
+                .background(Color.orrange)
                 .cornerRadius(10)
             }
 
@@ -31,12 +36,12 @@ struct RecordUploadSheet: View {
                     Image(systemName: "square.and.arrow.up")
                     Text("Upload Audio or Video")
                 }
-                .foregroundColor(.red)
+                .foregroundColor(.orrange)
                 .frame(maxWidth: .infinity)
                 .padding()
                 .overlay(
                     RoundedRectangle(cornerRadius: 10)
-                        .stroke(Color.red, lineWidth: 1)
+                        .stroke(Color.orrange, lineWidth: 1)
                 )
             }
 
@@ -62,7 +67,7 @@ struct RecordUploadSheet: View {
             Spacer()
         }
         .padding()
-        .background(Color.white)
+        .background(Color.graay) 
         .cornerRadius(20)
     }
 }
