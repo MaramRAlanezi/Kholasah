@@ -5,6 +5,7 @@
 //  Created by Maram Rabeh  on 12/05/2025.
 //
 
+
 import SwiftUICore
 import SwiftUI
 
@@ -67,7 +68,7 @@ struct RecordUploadSheet: View {
             Spacer()
         }
         .padding()
-        .background(Color.graay) 
+        .background(Color.graay)
         .cornerRadius(20)
     }
 }

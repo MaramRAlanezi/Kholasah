@@ -11,7 +11,7 @@ struct AudioHomeView: View {
     var body: some View {
         VStack {
             Spacer()
-            MainButton()
+            MainButton() 
             Spacer()
         }
         .background(Color.white)
