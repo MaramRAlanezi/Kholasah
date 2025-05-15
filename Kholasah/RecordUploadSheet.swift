@@ -57,7 +57,7 @@ struct RecordUploadSheet: View {
                     Text("• Use high-quality audio files for better accuracy")
                 }
                 .font(.subheadline)
-                .foregroundColor(.gray)
+              //  .foregroundColor(.gray)
             }
             .padding()
             .background(
@@ -66,9 +66,14 @@ struct RecordUploadSheet: View {
             )
 
             Spacer()
-        }
+        } 
+       // .frame(width: 414, height: 303)
         .padding()
         .background(Color.graay)
         .cornerRadius(20)
+        .presentationDetents([.height(350)])
+        .presentationDragIndicator(.visible)
+        
     }
+    
 }
