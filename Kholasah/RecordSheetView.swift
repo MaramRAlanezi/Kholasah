@@ -6,8 +6,13 @@
 //
 
 import SwiftUI
+import UniformTypeIdentifiers
 
 struct RecordSheetView: View {
+    @State private var showFileImporter = false
+    @State private var selectedFileURL: URL?
+    @State private var navigateToTranscript = false
+    
     var body: some View {
         VStack(spacing: 18) {
                    Capsule()
@@ -31,10 +36,10 @@ struct RecordSheetView: View {
                    }
 
                    Button(action: {
-                       print("Upload tapped")
+                       showFileImporter = true
                    }) {
                        HStack {
-                           Image(systemName: "arrow.up.doc")
+                           Image(systemName: "square.and.arrow.up")
                            Text("Upload Audio or Video")
                                .bold()
                        }
@@ -75,6 +80,29 @@ struct RecordSheetView: View {
                    Spacer()
                }
                .padding()
+               .fileImporter(
+                           isPresented: $showFileImporter,
+                           allowedContentTypes: [
+                               UTType.audio,
+                               UTType.movie,
+                               UTType(filenameExtension: "wav")!,
+                               UTType(filenameExtension: "mp4")!,
+                               UTType(filenameExtension: "m4a")!,
+                               UTType(filenameExtension: "mp3")!
+                           ],
+                           allowsMultipleSelection: false
+                       ) { result in
+                           switch result {
+                           case .success(let urls):
+                               if let selected = urls.first {
+                                   selectedFileURL = selected
+                                   print("Selected file: \(selected.lastPathComponent)")
+                                   // You can now pass `selectedFileURL` to your processing logic
+                               }
+                           case .failure(let error):
+                               print("File selection error: \(error.localizedDescription)")
+                           }
+                       }
     }
 }
 
