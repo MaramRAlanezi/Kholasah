@@ -1,18 +1,9 @@
-//
-//  Model.swift
-//  Kholasah
-//
-//  Created by Shaden Alhumood on 09/11/1446 AH.
-//
+import Foundation
 
-import SwiftUI
-
-struct Model: View {
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
-    }
-}
-
-#Preview {
-    Model()
+struct Meeting: Identifiable, Equatable {
+    let id = UUID()
+    var title: String
+    var date: String
+    var time: String
+    var duration: String
 }
