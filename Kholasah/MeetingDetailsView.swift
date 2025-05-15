@@ -482,7 +482,7 @@ return result.trimmingCharacters(in: .whitespacesAndNewlines)
 
 
 func summarizeTranscript(transcript: String, completion: @escaping (String?) -> Void) {
-let apiKey = "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"
+let apiKey = ""
 let url = URL(string: "https://api.groq.com/openai/v1/chat/completions")!
 
 let headers = [
