@@ -1,9 +1,8 @@
-//
+
 //  AudioRecorder.swift
 //  Kholasah
 //
 //  Created by Wejdan Alghamdi on 17/11/1446 AH.
-//
 
 import AudioKit
 import AVFoundation

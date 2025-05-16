@@ -158,7 +158,7 @@ struct RecordAudioView: View {
                         .padding()
                 } else {
                     Button("See Transcript") {
-                        startTranscription() // 👈 This now runs transcription
+                        startTranscription()
                     }
                     .padding()
                     .foregroundColor(.white)

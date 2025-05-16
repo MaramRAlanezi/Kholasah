@@ -1,16 +1,17 @@
 //
 //  HomePage.swift
 //  Kholasah
-//
+
 //  Created by Wejdan Alghamdi on 17/11/1446 AH.
-//
+
 
 import SwiftUI
 
 struct HomePage: View {
     
     @State private var showSheet = false
-    
+
+    @State private var showMeetingSheet = true
     
     var body: some View {
         
@@ -40,15 +41,20 @@ struct HomePage: View {
                     .font(.headline)
                     .foregroundColor(.gray)
                 
-                Spacer()
+                Spacer(minLength: 100)
                 
                 // Meeting history (mock example)
-                
-//                    .padding(.horizontal)
-//
-                Spacer(minLength: 20)
+                List {
+                    TestHome(title: "Innovation Brainstorm", date: "Jan 28, 2025", time: "11:00 PM", duration: "90 min")
+                    TestHome(title: "Mid-Review", date: "Jan 28, 2025", time: "2:00 PM", duration: "60 min")
+                    TestHome(title: "Mid-Review", date: "Jan 28, 2025", time: "2:00 PM", duration: "60 min")
+                    TestHome(title: "Mid-Review", date: "Jan 28, 2025", time: "2:00 PM", duration: "60 min")
+                        }
+                        .listStyle(.plain)
             }
-            .padding(.top)
+            
+           // BottomCardSheet(meetings: meetings)
+            //.padding(.top)
             
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -64,13 +70,17 @@ struct HomePage: View {
                 }
             }
             .sheet(isPresented: $showSheet) {
+               
                 RecordSheetView()
                     .presentationDetents([.height(350)])
+                   
                 
             }
         }
     }
 }
+
+
 
 #Preview {
     HomePage()
