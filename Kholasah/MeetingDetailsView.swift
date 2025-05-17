@@ -14,52 +14,61 @@ struct MeetingDetailsView: View {
 @State private var isLoading: Bool = false
 @State private var showExcelPreview = false
 @State private var excelFileURL: URL?
+@State private var extractedTasks: [(task: String, assignee: String?, dueDate: String?, status: String?, comments: String?)] = []
+
 
 
 let tabs = ["Transcript", "Summary", "Report"]
 
 let transcriptSample = """
-Alright, let’s kick off. First up is the backend update.
+مم... طيب خلونا نبدأ، بس هل الكل موجود؟
+إيه تقريبًا، باقي واحد أو اثنين ما دخلوا، بس نقدر نبدأ مبدئيًا.
 
-We finished integrating the authentication API. The response time dropped significantly — about 30% better than before. We tested it using Postman, and it’s stable.
+أوكي، أول شيء... backend، وش صار على الـ API اللي كنا نشتغل عليه؟
+إيه خلصنا الربط، والـ endpoints شغالة، بس فيه مشكلة بسيطة مع الـ authentication، أحيانًا الـ token ينتهي بسرعة.
+هاه؟ قصدك إنه ينتهي قبل وقته؟
+أيوه، بالضبط، جربنا نخلي الجلسة مفتوحة لمدة عشر دقايق بدون تفاعل، وانتهى فجأة.
+مممم، يمكن لازم نراجع إعدادات الـ refresh token.
 
-Did you loop in the security team for a quick review on the new protocols?
+طيب والـ testing؟ سويتوا test على أكثر من سيناريو؟
+إيه، استخدمنا Postman، و... جربنا login > access > refresh، كله تمام، إلا لما نترك الجهاز ساكت.
+غريبة... طيب نرفع bug report ونخلي أحد يشوفها اليوم.
 
-Not yet. I’ll send them the report by end of day today.
+طيب الـ UI/UX، اللي سويناه الأسبوع اللي راح، هل وصل؟
+إيه... عدلنا الـ dashboard layout، بس ترى واجهتنا مشكلة في responsiveness على بعض الأجهزة.
+وش نوع الأجهزة؟
+يعني مثلاً الـ iPhone 8 و 7، الحركة بطيئة.
+آه، بسبب الـ animation؟
+ممكن، لأن الـ transition ثقيل شوية، فـ راح نحاول نخفف منه أو نخليه optional.
 
-Okay. On the frontend side, there’s an issue showing up in Safari. The layout breaks when the user switches from light to dark mode. It works fine in Chrome and Firefox.
+وفيه شغلة ثانية... الـ dark mode؟ الأيقونات مو واضحة أبد.
+إي صح، الأبيض طاغي، نغير اللون ولا نغير الأيقونات؟
+نغيّر الـ assets أحسن... يكون فيهم تباين أكثر.
 
-Yeah, I noticed that too. I think it's related to the CSS toggle state. I’m pushing a fix today — I just need someone to review it before merging.
+طيب، وش عن الحملة؟ التسويق؟
+بدأنا من أمس، نشرنا فيديو مدته نص دقيقة، وحطيناه على تويتر وإنستا.
+كيف التفاعل؟
+يعني... مو ذاك الزود، فيه شوية likes وناس تسأل وش الفايدة من التطبيق.
+إيه توقعت... لأن الفيديو ما فيه call to action واضح.
+بالضبط، لازم نعيد المقطع أو نسوي نسخة قصيرة فيها steps.
 
-Send me the pull request — I’ll take a look.
+وفيه شي... فيه أحد جرب النسخة الجديدة؟
+أنا جربتها... في login فيه delay بسيط.
+من النت ولا من التطبيق؟
+لا، من التطبيق، لأن سويتها على Wi-Fi قوي وما زال delay موجود.
+طيب نحطها في Jira، نخلي أحد يشوف الـ logs.
 
-Cool. On iOS, the camera module is working fine, but VoiceOver isn’t behaving correctly. When it’s enabled, the focus jumps around randomly. It's not following a logical reading order.
+مممم، فيه شيء ثاني؟
+أوه، الترجمة… الترجمة العربية داخل التطبيق شوي ركيكة.
+إي حتى أنا لاحظت، خاصة لما تطلع رسالة خطأ.
+طيب نرفع ملف الترجمة ونبدأ نراجع النصوص يدوي.
 
-Let’s flag that as a blocker. Also, we need to wrap up the dashboard redesign this sprint. Are the mockups ready?
+طيب، وش الخطة الجاية؟
+يعني، نصلح الـ token، نحسّن الـ animations، ونسوي فيديو تسويقي جديد، غير كذا نراجع الترجمات ونرفع نسخة جديدة للـ TestFlight.
 
-They are — I uploaded them to Figma. The new design uses a tabbed layout with a floating action button at the bottom.
-
-Great. From the QA side, we found three bugs related to logout. One of them is a session timeout issue. It’s already documented in Jira.
-
-Alright. We also need to schedule a meeting with the security team this week to review everything.
-
-Task list for next week:
-
-Backend: finalize the token refresh logic.
-Frontend: fix Safari layout issue and logout timeout.
-iOS: improve VoiceOver behavior.
-QA: start regression testing on Monday.
-Any blockers or dependencies?
-
-We’re still waiting on the new API key from the third-party provider. It’s been two days.
-
-I’ll escalate that today.
-
-Anything else?
-
-Nope, that’s all.
-
-Cool — thanks, everyone. Let’s meet again next week, same time.
+تمام... الاجتماع الجاي نخليه الأحد؟
+إيه مناسب.
+أوكي، يعطيكم العافية.
 """
 
 var body: some View {
@@ -114,12 +123,10 @@ Spacer()
 .padding(.bottom)
 .background(Color(.white))
 .sheet(isPresented: $showExcelPreview) {
-if let url = excelFileURL {
-ExcelSheetPreview(tasks: extractSmartTasks(from: transcriptSample), fileURL: url)
+    if let url = excelFileURL {
+        ExcelSheetPreview(tasks: extractedTasks, fileURL: url) // ✅ Use real tasks
+    }
 }
-}
-
-
 
 
 }
@@ -220,7 +227,6 @@ Image(systemName: "square.and.arrow.up")
 ShareSheet(activityItems: [fileURL])
 }
 }
-// MARK: - Helpers
 
 func headerCell(_ title: String) -> some View {
 Text(title)
@@ -252,7 +258,7 @@ Button(action: {
 print("📄 Professional Report tapped")
 }) {
 HStack(spacing: 10) {
-Image("pdficon") // Make sure this image exists in your Assets
+Image("pdficon")
 .resizable()
 .frame(width: 20, height: 20)
 Text("Professional Report")
@@ -269,26 +275,34 @@ RoundedRectangle(cornerRadius: 12)
 .cornerRadius(12)
 }
 
-Button(action: {
-let tasks = extractSmartTasks(from: transcriptSample)
-let csv = generateSmartCSV(from: tasks)
-if let url = saveCSVFile(csvContent: csv) {
-excelFileURL = url
-showExcelPreview = true
-}
-}) {
-HStack(spacing: 10) {
-Image(systemName: "tablecells")
-.foregroundColor(.white)
-Text("Excel Sheet")
-.fontWeight(.medium)
-.foregroundColor(.white)
-Spacer()
-}
-.padding()
-.background(Color.darkPurple)
-.cornerRadius(12)
-}
+    Button(action: {
+        isLoading = true
+        extractTasksFromTranscript(transcriptSample) { tasks in
+            DispatchQueue.main.async {
+                isLoading = false
+                let csvTasks = tasks.map { ($0.task, $0.assignee, $0.due_date, $0.status, $0.comments) }
+                self.extractedTasks = csvTasks // ✅ Save to state
+
+                let csv = generateSmartCSV(from: csvTasks)
+                if let url = saveCSVFile(csvContent: csv) {
+                    excelFileURL = url
+                    showExcelPreview = true
+                }
+            }
+        }
+    }) {
+        HStack(spacing: 10) {
+            Image(systemName: "tablecells")
+                .foregroundColor(.white)
+            Text("Excel Sheet")
+                .fontWeight(.medium)
+                .foregroundColor(.white)
+            Spacer()
+        }
+        .padding()
+        .background(Color.darkPurple)
+        .cornerRadius(12)
+    }
 
 }
 .padding()
@@ -328,79 +342,6 @@ onTap()
 }
 }
 }
-func extractSmartTasks(from transcript: String) -> [(task: String, assignee: String?, dueDate: String?, status: String?, comments: String?)] {
-let lines = transcript.components(separatedBy: .newlines)
-var results: [(String, String?, String?, String?, String?)] = []
-
-for line in lines {
-let cleaned = line.trimmingCharacters(in: .whitespacesAndNewlines)
-
-guard !cleaned.isEmpty else { continue }
-
-// Skip non-task phrases
-if cleaned.lowercased().contains("thanks")
-|| cleaned.lowercased().contains("let’s meet")
-|| cleaned.lowercased().contains("cool")
-|| cleaned.lowercased().contains("kick off") {
-continue
-}
-
-// Rewrite task if possible
-if let rewritten = smartRewriteTask(from: cleaned) {
-let due = extractDate(from: cleaned)
-results.append((rewritten, nil, due, nil, nil))
-}
-}
-
-return results
-}
-
-func extractDate(from sentence: String) -> String? {
-let lower = sentence.lowercased()
-if lower.contains("end of day") {
-return "End of day"
-} else if lower.contains("monday") {
-return "Monday"
-} else if lower.contains("this week") {
-return "This week"
-}
-return nil
-}
-
-func smartRewriteTask(from sentence: String) -> String? {
-let lower = sentence.lowercased()
-
-if lower.contains("send") && lower.contains("report") {
-return "Send the security report"
-} else if lower.contains("pull request") && lower.contains("take a look") {
-return "Review pull request"
-} else if lower.contains("wrap up") && lower.contains("dashboard") {
-return "Finalize dashboard redesign"
-} else if lower.contains("upload") && lower.contains("figma") {
-return "Upload mockups to Figma"
-} else if lower.contains("start regression testing") {
-return "Start regression testing"
-} else if lower.contains("token refresh") {
-return "Finalize token refresh logic"
-} else if lower.contains("schedule") && lower.contains("meeting") {
-return "Schedule meeting with security team"
-} else if lower.contains("fix") && lower.contains("safari") {
-return "Fix Safari layout issue"
-} else if lower.contains("logout timeout") {
-return "Resolve logout timeout issue"
-} else if lower.contains("escalate") {
-return "Escalate API key delay"
-}
-
-// Try fallback if it seems actiony
-if lower.starts(with: "i’ll") || lower.starts(with: "we need") || lower.contains("please") {
-return sentence
-}
-
-// If it doesn't sound like a task, skip it
-return nil
-}
-
 
 func generateSmartCSV(from tasks: [(task: String, assignee: String?, dueDate: String?, status: String?, comments: String?)]) -> String {
 var csv = "Task,Assignee,Due Date,Status,Comments\n"
@@ -482,7 +423,7 @@ return result.trimmingCharacters(in: .whitespacesAndNewlines)
 
 
 func summarizeTranscript(transcript: String, completion: @escaping (String?) -> Void) {
-let apiKey = ""
+let apiKey = "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"
 let url = URL(string: "https://api.groq.com/openai/v1/chat/completions")!
 
 let headers = [
@@ -516,14 +457,19 @@ Summarize this meeting in English. Do **not** write any introductions like "Here
 • Tasks Assigned:
 • Main Focus:
 """
+    let summaryMessages = [
+        SummaryMessage(role: "system", content:
+        """
+        You are a a both arabic and english proffesional assistant that generates clear and well-formatted summaries for meeting transcripts. 
+        ⚠️ Do not add any explanation, notes, or comments about how you generated the summary, also dont put any letters that is non arabic and english. 
+        Only return the summary in the requested structure without mentioning formatting or technical term handling.
+        """
+        ),
 
-let messages = [
-Message(role: "system", content: "You are a multilingual assistant that generates clear and well-formatted summaries for meeting transcripts."),
-Message(role: "user", content: "\(prompt)\n\nTranscript:\n\(transcript)")
-]
 
-// let requestBody = ChatRequest(model: "mixtral-8x7b-32768", messages: messages)
-let requestBody = ChatRequest(model: "llama3-70b-8192", messages: messages)
+        SummaryMessage(role: "user", content: "\(prompt)\n\nTranscript:\n\(transcript)")
+    ]
+    let requestBody = SummaryRequest(model: "llama3-70b-8192", messages: summaryMessages)
 
 
 guard let httpBody = try? JSONEncoder().encode(requestBody) else {
@@ -549,7 +495,7 @@ print("📡 HTTP status: \(httpResponse.statusCode)")
 }
 
 guard let data = data,
-let chatResponse = try? JSONDecoder().decode(ChatResponse.self, from: data),
+      let chatResponse = try? JSONDecoder().decode(SummaryResponse.self, from: data),
 let summary = chatResponse.choices.first?.message.content else {
 print("❌ Failed to parse summary")
 print("🧾 Raw response: \(String(data: data ?? Data(), encoding: .utf8) ?? "No data")")
@@ -566,21 +512,37 @@ completion(final)
 
 
 
-struct ChatRequest: Codable {
-let model: String
-let messages: [Message]
+//struct ChatRequest: Codable {
+//let model: String
+//let messages: [Message]
+//}
+//
+//struct Message: Codable {
+//let role: String
+//let content: String
+//}
+//
+//struct ChatResponse: Codable {
+//struct Choice: Codable {
+//let message: Message
+//}
+//let choices: [Choice]
+//}
+struct SummaryRequest: Codable {
+    let model: String
+    let messages: [SummaryMessage]
 }
 
-struct Message: Codable {
-let role: String
-let content: String
+struct SummaryMessage: Codable {
+    let role: String
+    let content: String
 }
 
-struct ChatResponse: Codable {
-struct Choice: Codable {
-let message: Message
-}
-let choices: [Choice]
+struct SummaryResponse: Codable {
+    struct Choice: Codable {
+        let message: SummaryMessage
+    }
+    let choices: [Choice]
 }
 
 
